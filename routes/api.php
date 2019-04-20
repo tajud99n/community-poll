@@ -16,3 +16,10 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('polls', 'PollsController@index');
+Route::get('poll/{id}', 'PollsController@show');
+Route::post('poll', 'PollsController@store');
+Route::put('poll/{poll}', 'PollsController@update');
+Route::delete('poll/{poll}', 'PollsController@delete');
+Route::any('errors', 'PollsController@errors');
