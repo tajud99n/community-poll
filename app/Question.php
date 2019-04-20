@@ -14,4 +14,9 @@ class Question extends Model
     protected $fillable = [
         'title', 'question', 'poll_id',
     ];
+
+    public function poll()
+    {
+        return $this->belongsTo('App\Poll');
+    }
 }

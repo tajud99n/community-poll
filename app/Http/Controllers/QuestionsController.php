@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Question;
+use Validator;
 
 class QuestionsController extends Controller
 {
@@ -35,6 +36,15 @@ class QuestionsController extends Controller
      */
     public function store(Request $request)
     {
+        $rules = [
+            'title' => 'required|max:100',
+            'question' => 'required|max:200',
+            'poll_id' => 'required|integer',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
         return response()->json(Question::create($request->all()), 201);
     }
 
@@ -46,7 +56,13 @@ class QuestionsController extends Controller
      */
     public function show($id)
     {
-        return response()->json($question, 200);
+        $question = Question::findOrFail($id);
+        if (is_null($question)) {
+            return response()->json(null, 404);
+        }
+        $response['question'] = $question;
+        $response['poll'] = $question->poll;
+        return response()->json($response, 200);
     }
 
     /**
@@ -78,8 +94,9 @@ class QuestionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Question $id)
     {
-        return response()->json($question->delete(), 204);
+        $id->delete();
+        return response()->json(null, 204);
     }
 }
